@@ -1,0 +1,150 @@
+/* ==========================================================================
+   NEXUS — Interactions (Agent 8)
+   Custom cursor, magnetic hover, 3D tilt glare, scroll reveal.
+   Tokens only — every color comes from var(--*) in tokens.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Custom cursor — neon dot + trailing ring
+   JS owns transform (position/scale, lerped); CSS owns look + state fades.
+   Native cursor is hidden only while the custom one is active.
+   -------------------------------------------------------------------------- */
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  mix-blend-mode: screen;
+  border-radius: var(--radius-full);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cursor-dot.is-active,
+.cursor-ring.is-active {
+  opacity: 1;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-neon-cyan);
+  box-shadow: var(--glow-cyan);
+  transition: opacity var(--dur-base) var(--ease-out-quart);
+}
+
+.cursor-dot.is-down {
+  background: var(--color-neon-magenta);
+  box-shadow: var(--glow-magenta);
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(var(--rgb-cyan) / 0.55);
+  box-shadow:
+    0 0 12px rgba(var(--rgb-cyan) / 0.25),
+    inset 0 0 12px rgba(var(--rgb-cyan) / 0.12);
+  transition:
+    opacity var(--dur-base) var(--ease-out-quart),
+    border-color var(--dur-base) var(--ease-out-quart),
+    box-shadow var(--dur-base) var(--ease-out-quart),
+    background-color var(--dur-base) var(--ease-out-quart);
+}
+
+/* Hovering an interactive target: ring brightens (JS handles the expansion) */
+.cursor-ring.is-hover {
+  border-color: var(--glass-border-hot);
+  background-color: rgba(var(--rgb-cyan) / 0.06);
+  box-shadow:
+    0 0 22px rgba(var(--rgb-cyan) / 0.45),
+    inset 0 0 18px rgba(var(--rgb-cyan) / 0.20);
+}
+
+/* --------------------------------------------------------------------------
+   Magnetic elements — JS lerps the translate; just hint the compositor
+   -------------------------------------------------------------------------- */
+
+[data-magnetic] {
+  will-change: transform;
+}
+
+/* --------------------------------------------------------------------------
+   3D tilt — perspective rotation from JS + moving glare via --mx / --my
+   -------------------------------------------------------------------------- */
+
+[data-tilt] {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+[data-tilt]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(var(--rgb-cyan) / 0.20) 0%,
+    rgba(var(--rgb-violet) / 0.10) 38%,
+    transparent 68%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-quart);
+  transform: translateZ(1px); /* keep the sheen above card content in 3D */
+}
+
+[data-tilt]:hover::after {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveal — hidden until IntersectionObserver adds .is-revealed
+   Stagger comes from JS via [data-reveal-delay] -> inline transition-delay.
+   -------------------------------------------------------------------------- */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(8px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out-expo),
+    transform var(--dur-reveal) var(--ease-out-expo),
+    filter var(--dur-reveal) var(--ease-out-expo);
+  will-change: opacity, transform, filter;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  will-change: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — cursor/tilt/magnetic are skipped in JS; reveal is
+   downgraded to a simple opacity fade with no movement or blur.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transform: none;
+    filter: none;
+    transition: opacity var(--dur-slow) var(--ease-out-quart);
+  }
+
+  [data-tilt]::after {
+    display: none;
+  }
+}

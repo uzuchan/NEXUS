@@ -1,0 +1,226 @@
+/* ==========================================================================
+   NEXUS — Base / Reset / Layout foundation
+   Owned by Agent 1 (Design System). Tokens live in tokens.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: inherit;
+  font-size: inherit;
+  overflow-wrap: break-word;
+}
+
+p {
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Document
+   -------------------------------------------------------------------------- */
+html {
+  /* JS owns smooth scrolling (lerp); native smoothing would fight it */
+  scroll-behavior: auto;
+  -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+
+::selection {
+  background: rgba(var(--rgb-cyan) / 0.85);
+  color: var(--color-bg-deep);
+  text-shadow: none;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Headings default to the display face; sections refine from here */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-xs);
+}
+
+/* --------------------------------------------------------------------------
+   Core layers — WebGL canvas behind, app content above
+   -------------------------------------------------------------------------- */
+#gl-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-canvas);
+  display: block;
+  pointer-events: none;
+}
+
+#app {
+  position: relative;
+  z-index: var(--z-app);
+}
+
+/* --------------------------------------------------------------------------
+   Section panels — full-viewport cinematic frames
+   -------------------------------------------------------------------------- */
+section.panel {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-section) var(--space-gutter);
+}
+
+/* --------------------------------------------------------------------------
+   Scrollbar — thin neon
+   -------------------------------------------------------------------------- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--rgb-cyan) / 0.45) var(--color-bg-deep);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--rgb-cyan) / 0.7),
+    rgba(var(--rgb-violet) / 0.7),
+    rgba(var(--rgb-magenta) / 0.7)
+  );
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--grad-neon-vertical);
+}
+
+/* --------------------------------------------------------------------------
+   Film grain + vignette overlay — pure CSS, sits above the UI (but below
+   the custom cursor) and never intercepts input
+   -------------------------------------------------------------------------- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  /* vignette: darkened corners pull focus to center */
+  background:
+    radial-gradient(
+      130% 130% at 50% 42%,
+      transparent 0%,
+      transparent 55%,
+      rgba(var(--rgb-bg) / 0.55) 100%
+    ),
+    /* fine interference pattern approximating grain / scanlines */
+    repeating-radial-gradient(
+      circle at 17% 31%,
+      transparent 0,
+      transparent 2px,
+      rgba(255 255 255 / 0.012) 2px,
+      rgba(255 255 255 / 0.012) 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(var(--rgb-cyan) / 0.008) 3px,
+      rgba(var(--rgb-cyan) / 0.008) 4px
+    );
+  mix-blend-mode: normal;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — kill all animation immediately
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

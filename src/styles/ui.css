@@ -1,0 +1,510 @@
+/* ==========================================================================
+   NEXUS — Holo UI (Agent 7)
+   Glass cards, HUD decorations, layered depth.
+   Tokens only — every color/size references var(--*) from tokens.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Layout container — layered depth: content floats in a centered column
+   -------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Fixed glass header
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-gutter);
+  background: rgba(var(--rgb-bg) / 0.55);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-bottom: var(--border-hair);
+}
+
+/* hairline gradient glint along the header's bottom edge */
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--grad-hairline);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.site-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-mega);
+  padding-left: var(--tracking-mega); /* optically recenters tracked text */
+  color: var(--color-text-neon);
+  text-shadow: var(--glow-text);
+  display: inline-block;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--space-sm), 2.5vw, var(--space-lg));
+}
+
+.site-nav a {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  padding: var(--space-2xs) var(--space-2xs);
+  transition: color var(--dur-base) var(--ease-out-quart),
+              text-shadow var(--dur-base) var(--ease-out-quart);
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible {
+  color: var(--color-text-neon);
+  text-shadow: var(--glow-text);
+}
+
+/* --------------------------------------------------------------------------
+   Kickers — mono HUD eyebrows
+   -------------------------------------------------------------------------- */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mega);
+  text-transform: uppercase;
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-text);
+}
+
+.kicker-glyph {
+  margin-right: var(--space-xs);
+  color: var(--color-neon-magenta);
+  text-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   Gradient text utility
+   -------------------------------------------------------------------------- */
+.text-gradient {
+  background: var(--grad-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Section header pattern (kicker / title / subtitle)
+   -------------------------------------------------------------------------- */
+.section-head {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
+  margin-top: var(--space-md);
+}
+
+.section-subtitle {
+  max-width: 46ch;
+  margin-top: var(--space-md);
+  margin-inline: auto;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+.hero-inner {
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--text-hero);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-wide);
+  margin-top: var(--space-md);
+}
+
+.hero-subtitle {
+  max-width: 56ch;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+}
+
+/* HUD corner brackets framing the hero panel */
+.hud-frame {
+  position: absolute;
+  inset: clamp(var(--space-md), 4vw, var(--space-xl));
+  pointer-events: none;
+}
+
+.hud-frame i {
+  position: absolute;
+  width: clamp(18px, 3vw, 34px);
+  height: clamp(18px, 3vw, 34px);
+  border: 0 solid var(--color-line-strong);
+}
+
+.hud-frame i:nth-child(1) { top: 0;    left: 0;  border-top-width: 1px; border-left-width: 1px; }
+.hud-frame i:nth-child(2) { top: 0;    right: 0; border-top-width: 1px; border-right-width: 1px; }
+.hud-frame i:nth-child(3) { bottom: 0; left: 0;  border-bottom-width: 1px; border-left-width: 1px; }
+.hud-frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+
+/* Scroll hint — drifting beam inside a hairline track */
+.scroll-hint {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.scroll-hint-track {
+  display: block;
+  width: 1px;
+  height: var(--space-xl);
+  background: var(--color-line);
+  overflow: hidden;
+}
+
+.scroll-hint-beam {
+  display: block;
+  width: 100%;
+  height: 40%;
+  background: var(--grad-neon-vertical);
+  box-shadow: var(--glow-cyan);
+  animation: scroll-hint-drift 2.2s var(--ease-in-out) infinite;
+}
+
+@keyframes scroll-hint-drift {
+  0%   { transform: translateY(-110%); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(260%); opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   Glass card
+   -------------------------------------------------------------------------- */
+.glass-card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-lg);
+  overflow: hidden;
+  transition:
+    border-color var(--dur-base) var(--ease-out-quart),
+    box-shadow var(--dur-base) var(--ease-out-quart),
+    translate var(--dur-base) var(--ease-out-quart),
+    background-color var(--dur-base) var(--ease-out-quart);
+}
+
+/* top-edge highlight — 1px gradient hairline
+   (::after is reserved by [data-tilt] glare; decorations live in ::before) */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--grad-hairline);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  border-color: var(--glass-border-hot);
+  box-shadow: var(--shadow-card-hover);
+  background-color: var(--glass-bg-hover);
+  /* translate (not transform) so the lift never fights the JS tilt transform */
+  translate: 0 -4px;
+}
+
+/* --------------------------------------------------------------------------
+   Modules grid + cards
+   -------------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: var(--space-md);
+}
+
+.module-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.module-icon {
+  display: inline-grid;
+  place-items: center;
+  width: var(--space-xl);
+  height: var(--space-xl);
+  font-size: var(--text-lg);
+  line-height: 1;
+  color: var(--color-neon-cyan);
+  text-shadow: var(--glow-text);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glow-cyan);
+}
+
+.module-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-md);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text);
+}
+
+.module-body {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-soft);
+  flex-grow: 1;
+}
+
+/* mono HUD footer with pulsing status dot */
+.module-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-top: var(--space-sm);
+  border-top: var(--border-hair);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-dim);
+}
+
+.status-dot {
+  flex-shrink: 0;
+  width: var(--space-2xs);
+  height: var(--space-2xs);
+  border-radius: var(--radius-full);
+  background: var(--color-neon-cyan);
+  box-shadow: var(--glow-cyan);
+  animation: status-dot-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes status-dot-pulse {
+  0%, 100% { opacity: 1;    box-shadow: var(--glow-cyan); }
+  50%      { opacity: 0.35; box-shadow: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Network stats
+   -------------------------------------------------------------------------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: var(--space-md);
+}
+
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+}
+
+.stat-label {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-mega);
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+/* thin animated underline — shimmer sweeps along a hairline gradient */
+.stat-underline {
+  width: 100%;
+  height: 1px;
+  background: var(--grad-hairline);
+  background-size: 200% 100%;
+  animation: underline-shimmer 3.2s linear infinite;
+}
+
+@keyframes underline-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — glass pills
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  transition:
+    box-shadow var(--dur-base) var(--ease-out-quart),
+    border-color var(--dur-base) var(--ease-out-quart),
+    color var(--dur-base) var(--ease-out-quart),
+    background-color var(--dur-base) var(--ease-out-quart);
+}
+
+/* primary — gradient border trick: translucent fill clipped to padding-box,
+   neon gradient painted on the border-box behind it */
+.btn-primary {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(var(--rgb-bg) / 0.78), rgba(var(--rgb-bg) / 0.78)) padding-box,
+    var(--grad-neon) border-box;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  box-shadow: var(--glow-cyan);
+  color: var(--color-text);
+}
+
+/* secondary — ghost glass */
+.btn-ghost {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--color-text-soft);
+}
+
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  border-color: var(--glass-border-hot);
+  background: var(--glass-bg-hover);
+  color: var(--color-text);
+  box-shadow: var(--glow-cyan);
+}
+
+.btn-large {
+  padding: var(--space-md) var(--space-xl);
+  font-size: var(--text-base);
+}
+
+/* --------------------------------------------------------------------------
+   Contact + footer
+   -------------------------------------------------------------------------- */
+.contact-inner {
+  text-align: center;
+}
+
+.site-footer {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-md);
+  border-top: var(--border-hair);
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.footer-line {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-dim);
+}
+
+/* --------------------------------------------------------------------------
+   Narrow viewports (≥375px must hold together)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .site-header {
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding-block: var(--space-xs);
+  }
+
+  .site-brand {
+    font-size: var(--text-base);
+  }
+
+  .site-nav {
+    gap: var(--space-sm);
+  }
+
+  .cta-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 20rem;
+    text-align: center;
+  }
+
+  .section-head {
+    margin-bottom: var(--space-xl);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — kill every animation this file owns
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .status-dot,
+  .scroll-hint-beam,
+  .stat-underline {
+    animation: none;
+  }
+
+  .glass-card,
+  .glass-card:hover {
+    translate: none;
+  }
+}

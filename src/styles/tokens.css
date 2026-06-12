@@ -1,0 +1,201 @@
+/* ==========================================================================
+   NEXUS — Design Tokens
+   Owned by Agent 1 (Design System). All other CSS must reference var(--*).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+
+:root {
+  /* ------------------------------------------------------------------
+     Color — core palette (dark cinematic)
+     ------------------------------------------------------------------ */
+  --color-bg:            #030308;
+  --color-bg-elevated:   #07070f;
+  --color-bg-deep:       #010104;
+
+  --color-neon-cyan:     #4cf2ff;
+  --color-neon-magenta:  #ff4cd8;
+  --color-neon-violet:   #8b5cff;
+
+  /* RGB triplets for alpha composition: rgba(var(--rgb-cyan) / .25) */
+  --rgb-cyan:            76 242 255;
+  --rgb-magenta:         255 76 216;
+  --rgb-violet:          139 92 255;
+  --rgb-bg:              3 3 8;
+
+  /* Text */
+  --color-text:          #e8ecf4;
+  --color-text-soft:     #9aa3b8;
+  --color-text-dim:      #5b6275;
+  --color-text-ghost:    rgba(232 236 244 / 0.35);
+  --color-text-neon:     var(--color-neon-cyan);
+
+  /* Lines / hairlines */
+  --color-line:          rgba(76 242 255 / 0.14);
+  --color-line-strong:   rgba(76 242 255 / 0.32);
+
+  /* ------------------------------------------------------------------
+     Gradients
+     ------------------------------------------------------------------ */
+  --grad-neon: linear-gradient(
+    100deg,
+    var(--color-neon-cyan) 0%,
+    var(--color-neon-violet) 50%,
+    var(--color-neon-magenta) 100%
+  );
+  --grad-neon-soft: linear-gradient(
+    100deg,
+    rgba(76 242 255 / 0.55) 0%,
+    rgba(139 92 255 / 0.55) 50%,
+    rgba(255 76 216 / 0.55) 100%
+  );
+  --grad-neon-vertical: linear-gradient(
+    180deg,
+    var(--color-neon-cyan) 0%,
+    var(--color-neon-violet) 55%,
+    var(--color-neon-magenta) 100%
+  );
+  --grad-horizon: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(139 92 255 / 0.10) 60%,
+    rgba(255 76 216 / 0.16) 100%
+  );
+  /* Aurora wash for large surfaces / hero backplates */
+  --grad-aurora: radial-gradient(
+      120% 90% at 15% 0%,
+      rgba(76 242 255 / 0.10) 0%, transparent 55%
+    ),
+    radial-gradient(
+      110% 80% at 85% 100%,
+      rgba(255 76 216 / 0.09) 0%, transparent 55%
+    ),
+    radial-gradient(
+      90% 90% at 60% 40%,
+      rgba(139 92 255 / 0.08) 0%, transparent 60%
+    );
+  /* Hairline gradient for 1px borders via border-image / pseudo elements */
+  --grad-hairline: linear-gradient(
+    90deg,
+    transparent,
+    rgba(76 242 255 / 0.6),
+    rgba(255 76 216 / 0.6),
+    transparent
+  );
+
+  /* ------------------------------------------------------------------
+     Glassmorphism
+     ------------------------------------------------------------------ */
+  --glass-bg:            rgba(255 255 255 / 0.05);
+  --glass-bg-hover:      rgba(255 255 255 / 0.08);
+  --glass-bg-active:     rgba(255 255 255 / 0.10);
+  --glass-border:        rgba(76 242 255 / 0.25);
+  --glass-border-hot:    rgba(76 242 255 / 0.55);
+  --glass-blur:          18px;
+  --glass-blur-heavy:    32px;
+  --glass-saturate:      140%;
+
+  /* Glow shadows — layered neon */
+  --glow-cyan:
+    0 0 0 1px rgba(76 242 255 / 0.10),
+    0 0 18px rgba(76 242 255 / 0.22),
+    0 0 60px rgba(76 242 255 / 0.10);
+  --glow-magenta:
+    0 0 0 1px rgba(255 76 216 / 0.10),
+    0 0 18px rgba(255 76 216 / 0.22),
+    0 0 60px rgba(255 76 216 / 0.10);
+  --glow-violet:
+    0 0 0 1px rgba(139 92 255 / 0.10),
+    0 0 18px rgba(139 92 255 / 0.22),
+    0 0 60px rgba(139 92 255 / 0.10);
+  /* Card depth: ambient dark drop + inner sheen + faint neon rim */
+  --shadow-card:
+    0 24px 60px rgba(1 1 4 / 0.65),
+    inset 0 1px 0 rgba(255 255 255 / 0.08),
+    0 0 32px rgba(76 242 255 / 0.06);
+  --shadow-card-hover:
+    0 32px 80px rgba(1 1 4 / 0.75),
+    inset 0 1px 0 rgba(255 255 255 / 0.12),
+    0 0 28px rgba(76 242 255 / 0.18),
+    0 0 80px rgba(139 92 255 / 0.12);
+  --glow-text:
+    0 0 8px rgba(76 242 255 / 0.65),
+    0 0 28px rgba(76 242 255 / 0.30);
+
+  /* ------------------------------------------------------------------
+     Typography
+     ------------------------------------------------------------------ */
+  --font-display: "Orbitron", "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Fluid size scale */
+  --text-xs:   clamp(0.66rem, 0.62rem + 0.18vw, 0.75rem);
+  --text-sm:   clamp(0.78rem, 0.74rem + 0.22vw, 0.9rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem);
+  --text-md:   clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+  --text-lg:   clamp(1.4rem, 1.2rem + 1vw, 2rem);
+  --text-xl:   clamp(2rem, 1.5rem + 2.4vw, 3.4rem);
+  --text-2xl:  clamp(2.6rem, 1.8rem + 4vw, 5rem);
+  --text-hero: clamp(3rem, 2rem + 6.5vw, 7.5rem);
+
+  --leading-tight:  1.05;
+  --leading-snug:   1.25;
+  --leading-normal: 1.6;
+  --tracking-wide:  0.08em;
+  --tracking-mega:  0.32em;   /* HUD labels / eyebrows */
+
+  /* ------------------------------------------------------------------
+     Spacing scale
+     ------------------------------------------------------------------ */
+  --space-2xs: 0.25rem;   /*  4px */
+  --space-xs:  0.5rem;    /*  8px */
+  --space-sm:  0.75rem;   /* 12px */
+  --space-md:  1.25rem;   /* 20px */
+  --space-lg:  2rem;      /* 32px */
+  --space-xl:  3.25rem;   /* 52px */
+  --space-2xl: 5.25rem;   /* 84px */
+  --space-3xl: 8.5rem;    /* 136px */
+  --space-section: clamp(4rem, 10vh, 9rem);
+  --space-gutter:  clamp(1.25rem, 5vw, 4rem);
+
+  /* ------------------------------------------------------------------
+     Radius scale
+     ------------------------------------------------------------------ */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   22px;
+  --radius-xl:   32px;
+  --radius-full: 999px;
+
+  /* ------------------------------------------------------------------
+     Z-index layers
+     ------------------------------------------------------------------ */
+  --z-canvas:  0;     /* WebGL backdrop */
+  --z-app:     1;     /* DOM content */
+  --z-overlay: 50;    /* modals / transitions */
+  --z-grain:   90;    /* film grain / vignette wash — below the cursor */
+  --z-cursor:  100;   /* custom cursor — always on top */
+
+  /* ------------------------------------------------------------------
+     Motion — easing + duration
+     ------------------------------------------------------------------ */
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);  /* slight overshoot */
+  --ease-cinema:    cubic-bezier(0.83, 0, 0.17, 1);     /* heavy in-out, dolly feel */
+
+  --dur-fast:   160ms;
+  --dur-base:   320ms;
+  --dur-slow:   640ms;
+  --dur-cinema: 1200ms;
+  --dur-reveal: 900ms;
+
+  /* ------------------------------------------------------------------
+     Misc surfaces
+     ------------------------------------------------------------------ */
+  --border-hair: 1px solid var(--color-line);
+  --focus-ring:  0 0 0 2px rgba(3 3 8 / 0.9), 0 0 0 4px rgba(76 242 255 / 0.6);
+}

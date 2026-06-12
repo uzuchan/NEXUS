@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%234cf2ff' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ff4cd8'/%3E%3C/svg%3E" />
+    <title>NEXUS — A Next-Gen Digital Universe</title>
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <link rel="stylesheet" href="/src/styles/base.css" />
+    <link rel="stylesheet" href="/src/styles/ui.css" />
+    <link rel="stylesheet" href="/src/styles/interactions.css" />
+  </head>
+  <body>
+    <!-- WebGL layer (fixed, behind everything) -->
+    <canvas id="gl-canvas" aria-hidden="true"></canvas>
+
+    <!-- Fixed glass header (Agent 7) -->
+    <header class="site-header">
+      <a class="site-brand" href="#hero" data-magnetic>NEXUS</a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#hero" data-magnetic>Hero</a>
+        <a href="#modules" data-magnetic>Modules</a>
+        <a href="#network" data-magnetic>Network</a>
+        <a href="#contact" data-magnetic>Contact</a>
+      </nav>
+    </header>
+
+    <!-- DOM layer -->
+    <main id="app">
+      <!-- AGENT 7 (Holo UI): populate the four sections below.
+           Keep the section ids and the 4x100vh panel rhythm — nav anchors
+           target the ids, and CameraDirector derives its dolly progress from
+           scrollY alone (data-scene is decorative; no script reads it).
+           Copy is mirrored by hand from src/content/copy.js — keep in sync. -->
+      <section id="hero" class="panel" data-scene="hero">
+        <div class="hud-frame" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </div>
+
+        <div class="container hero-inner">
+          <p class="kicker" data-reveal>
+            <span class="kicker-glyph" aria-hidden="true">▸</span>SIGNAL // 001
+          </p>
+          <h1 class="hero-title text-gradient" data-reveal data-reveal-delay="120">
+            BEYOND THE<br />EVENT HORIZON
+          </h1>
+          <p class="section-subtitle hero-subtitle" data-reveal data-reveal-delay="240">
+            NEXUS is a living system at the edge of the renderable &mdash; a constructed cosmos where light, data, and intent converge into one continuous signal.
+          </p>
+          <div class="cta-row" data-reveal data-reveal-delay="360">
+            <a class="btn btn-primary" href="#contact" data-magnetic>Initiate Sequence</a>
+            <a class="btn btn-ghost" href="#modules" data-magnetic>Explore the System</a>
+          </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+          <span class="scroll-hint-track"><span class="scroll-hint-beam"></span></span>
+        </div>
+      </section>
+
+      <section id="modules" class="panel" data-scene="modules">
+        <div class="container">
+          <header class="section-head">
+            <p class="kicker" data-reveal>
+              <span class="kicker-glyph" aria-hidden="true">▸</span>SUBSYSTEMS // 002
+            </p>
+            <h2 class="section-title text-gradient" data-reveal data-reveal-delay="120">
+              THE ARCHITECTURE OF LIGHT
+            </h2>
+            <p class="section-subtitle" data-reveal data-reveal-delay="240">
+              Four core subsystems sustain the NEXUS field. Each runs autonomously. Together they dream in real time.
+            </p>
+          </header>
+
+          <div class="card-grid">
+            <article class="glass-card module-card" data-tilt data-reveal>
+              <span class="module-icon" aria-hidden="true">◬</span>
+              <h3 class="module-title">Particle Engine</h3>
+              <p class="module-body">
+                Forty thousand points of light, computed every frame on the GPU. They drift like dust through a nebula &mdash; until you move, and the field remembers you.
+              </p>
+              <footer class="module-meta">
+                <span class="status-dot" aria-hidden="true"></span>SYS.01 // ONLINE
+              </footer>
+            </article>
+
+            <article class="glass-card module-card" data-tilt data-reveal data-reveal-delay="120">
+              <span class="module-icon" aria-hidden="true">◈</span>
+              <h3 class="module-title">Neural Mesh</h3>
+              <p class="module-body">
+                A lattice of signal pathways threading the deep structure. Every interaction propagates outward, rewriting the geometry it touches.
+              </p>
+              <footer class="module-meta">
+                <span class="status-dot" aria-hidden="true"></span>SYS.02 // SYNCED
+              </footer>
+            </article>
+
+            <article class="glass-card module-card" data-tilt data-reveal data-reveal-delay="240">
+              <span class="module-icon" aria-hidden="true">⬡</span>
+              <h3 class="module-title">Holographic Interface</h3>
+              <p class="module-body">
+                The membrane between you and the machine. Glass panels suspended in depth, refracting data into form you can almost touch.
+              </p>
+              <footer class="module-meta">
+                <span class="status-dot" aria-hidden="true"></span>SYS.03 // ACTIVE
+              </footer>
+            </article>
+
+            <article class="glass-card module-card" data-tilt data-reveal data-reveal-delay="360">
+              <span class="module-icon" aria-hidden="true">✦</span>
+              <h3 class="module-title">Temporal Sync</h3>
+              <p class="module-body">
+                Time inside NEXUS is elastic. The sync core damps every motion into a single cinematic flow &mdash; no cuts, no seams, no waiting.
+              </p>
+              <footer class="module-meta">
+                <span class="status-dot" aria-hidden="true"></span>SYS.04 // STABLE
+              </footer>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="network" class="panel" data-scene="network">
+        <div class="container">
+          <header class="section-head">
+            <p class="kicker" data-reveal>
+              <span class="kicker-glyph" aria-hidden="true">▸</span>TELEMETRY // 003
+            </p>
+            <h2 class="section-title text-gradient" data-reveal data-reveal-delay="120">
+              A SYSTEM THAT NEVER SLEEPS
+            </h2>
+            <p class="section-subtitle" data-reveal data-reveal-delay="240">
+              Live readings from the NEXUS core. The numbers shift, the field holds.
+            </p>
+          </header>
+
+          <div class="stat-grid">
+            <div class="stat-block" data-reveal>
+              <span class="stat-value text-gradient">40K</span>
+              <span class="stat-label">Particles in Flight</span>
+              <span class="stat-underline" aria-hidden="true"></span>
+            </div>
+            <div class="stat-block" data-reveal data-reveal-delay="120">
+              <span class="stat-value text-gradient">99.99%</span>
+              <span class="stat-label">Signal Integrity</span>
+              <span class="stat-underline" aria-hidden="true"></span>
+            </div>
+            <div class="stat-block" data-reveal data-reveal-delay="240">
+              <span class="stat-value text-gradient">12.4K</span>
+              <span class="stat-label">Nodes in the Mesh</span>
+              <span class="stat-underline" aria-hidden="true"></span>
+            </div>
+            <div class="stat-block" data-reveal data-reveal-delay="360">
+              <span class="stat-value text-gradient">0.016s</span>
+              <span class="stat-label">Frame Horizon</span>
+              <span class="stat-underline" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="panel" data-scene="contact">
+        <div class="container contact-inner">
+          <p class="kicker" data-reveal>
+            <span class="kicker-glyph" aria-hidden="true">▸</span>UPLINK // 004
+          </p>
+          <h2 class="section-title text-gradient" data-reveal data-reveal-delay="120">
+            OPEN A CHANNEL
+          </h2>
+          <p class="section-subtitle" data-reveal data-reveal-delay="240">
+            The system is listening. Transmit your coordinates and step into the field.
+          </p>
+          <div class="cta-row" data-reveal data-reveal-delay="360">
+            <a class="btn btn-primary btn-large" href="#hero" data-magnetic>Establish Uplink</a>
+          </div>
+
+          <footer class="site-footer" data-reveal data-reveal-delay="480">
+            <p class="footer-line">A digital universe, rendered in real time.</p>
+            <p class="footer-line">NEXUS © 2026 — All frequencies reserved.</p>
+            <p class="footer-line">Broadcast from somewhere past the horizon.</p>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
