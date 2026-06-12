@@ -132,16 +132,17 @@
   /* Fluid size scale — clamp(min, preferred, max).
      Mins are tuned so the widest display strings (Orbitron 900 + tracking,
      e.g. "EVENT HORIZON") never force horizontal overflow at 390px.
-     At 390px: 1vw ≈ 3.9px. text-hero min 2.4rem keeps "HORIZON" inside the
-     gutter; text-xl/2xl mins likewise trimmed for the section/stat headings. */
+     At 390px (1vw ≈ 3.9px) text-hero lands ~36px so "EVENT HORIZON" stays
+     inside the gutter; text-xl/2xl mins likewise trimmed for section/stat
+     headings. Slopes stay steep enough that desktop still reaches the maxes. */
   --text-xs:   clamp(0.66rem, 0.62rem + 0.18vw, 0.75rem);
   --text-sm:   clamp(0.78rem, 0.74rem + 0.22vw, 0.9rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem);
   --text-md:   clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
   --text-lg:   clamp(1.4rem, 1.2rem + 1vw, 2rem);
-  --text-xl:   clamp(1.6rem, 1.32rem + 1.45vw, 3.4rem);
-  --text-2xl:  clamp(2rem, 1.55rem + 2.3vw, 5rem);
-  --text-hero: clamp(2.25rem, 1.75rem + 2.6vw, 7.5rem);
+  --text-xl:   clamp(1.6rem, 1.1rem + 2.05vw, 3.4rem);
+  --text-2xl:  clamp(2rem, 1.1rem + 3.7vw, 5rem);
+  --text-hero: clamp(2.25rem, 0.5rem + 7.2vw, 7.5rem);
 
   --leading-tight:  1.05;
   --leading-snug:   1.25;
