@@ -7,8 +7,20 @@ import * as THREE from 'three';
 // ---------------------------------------------------------------------------
 // Tuning
 // ---------------------------------------------------------------------------
-const FIELD_COUNT = 36000; // main mote field
-const EMBER_COUNT = 200;   // large slow embers for depth
+const FIELD_COUNT = 36000; // main mote field (max allocation; 'high' tier)
+const EMBER_COUNT = 200;   // large slow embers for depth (max allocation)
+
+// Adaptive-quality particle budgets. Geometry is always allocated at the 'high'
+// max above; setQuality only narrows the draw range, so tier changes never
+// re-allocate buffers (no GC hitch, no re-upload). Because positions are random
+// and order-independent, drawing the first N verts is a uniform spatial subset
+// with no clustering. Ember counts stay proportional to the field (~36k:200) so
+// the depth layer thins at the same rate.
+//   high  36000 / 200   (current look, unchanged)
+//   mid   18000 / 100
+//   low    8000 /  44
+const FIELD_BY_TIER = { high: 36000, mid: 18000, low: 8000 };
+const EMBER_BY_TIER = { high: 200, mid: 100, low: 44 };
 
 // Camera travels roughly z 8 -> z -30. Fill a box around that path:
 // x,y in ±25, z in +15..-45. The group is parked at the field's z-center so
@@ -225,6 +237,17 @@ export class Particles {
     geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
     geo.setAttribute('aColorMix', new THREE.BufferAttribute(colorMix, 1));
     return geo;
+  }
+
+  // Adaptive quality (v1.1). Buffers are allocated once at the 'high' max in the
+  // constructor; this only narrows each layer's draw range, so a tier change is
+  // a couple of integer writes with no re-allocation or re-upload. 'high'
+  // restores the full ranges, leaving the visuals byte-for-byte identical.
+  setQuality(tier) {
+    const fieldN = FIELD_BY_TIER[tier] ?? FIELD_COUNT;
+    const emberN = EMBER_BY_TIER[tier] ?? EMBER_COUNT;
+    this.field.geometry.setDrawRange(0, fieldN);
+    this.embers.geometry.setDrawRange(0, emberN);
   }
 
   update(dt, elapsed) {
