@@ -26,7 +26,13 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-md);
-  padding: var(--space-sm) var(--space-gutter);
+  /* fold the notch insets in so the brand/nav clear the status bar and the
+     rounded-corner cutouts (viewport-fit=cover lets env() report non-zero) */
+  padding:
+    calc(var(--space-sm) + var(--safe-top))
+    var(--space-gutter-safe-right)
+    var(--space-sm)
+    var(--space-gutter-safe-left);
   background: rgba(var(--rgb-bg) / 0.55);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
@@ -186,7 +192,8 @@
 /* Scroll hint — drifting beam inside a hairline track */
 .scroll-hint {
   position: absolute;
-  bottom: var(--space-lg);
+  /* keep the beam clear of the iOS home indicator on notched phones */
+  bottom: calc(var(--space-lg) + var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
@@ -463,10 +470,14 @@
    Narrow viewports (≥375px must hold together)
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
+  /* Keep the header a single compact row on phones — a stacked column made it
+     tall enough to crowd the hero title under it. Brand left, nav right, and
+     let the nav wrap rather than force a second header band. */
   .site-header {
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding-block: var(--space-xs);
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-sm);
+    padding-top: calc(var(--space-xs) + var(--safe-top));
+    padding-bottom: var(--space-xs);
   }
 
   .site-brand {
@@ -474,7 +485,24 @@
   }
 
   .site-nav {
-    gap: var(--space-sm);
+    gap: var(--space-xs) var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* Single-column stacks. The auto-fit grids already collapse at this width;
+     pinning to one column makes the intent explicit and removes any chance of
+     a too-narrow second track on the widest small phones. */
+  .card-grid,
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Trim the desktop card breathing room so body copy is not crowded against
+     the glass edge on a 390px screen. */
+  .glass-card,
+  .stat-block {
+    padding: var(--space-md);
   }
 
   .cta-row {
@@ -486,6 +514,12 @@
     width: 100%;
     max-width: 20rem;
     text-align: center;
+  }
+
+  /* Pull the corner brackets in tighter so they frame the hero panel rather
+     than wrapping close around the title at narrow widths. */
+  .hud-frame {
+    inset: var(--space-sm);
   }
 
   .section-head {

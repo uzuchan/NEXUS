@@ -4,15 +4,28 @@
 // All motion runs through a single rAF loop using lerp — no instant snapping.
 // Consumed by main.js as initInteractions(). Script is type=module, so the
 // DOM (including Agent 7's section markup) is parsed before this runs.
+//
+// Adaptive input/motion:
+//   - Touch-primary devices (pointer: coarse) get NO custom cursor and NO
+//     tilt/magnetic hover. Instead a tap fires a short neon glow pulse so the
+//     surface still feels alive and shared with the rest of the world.
+//   - reduced-motion skips the reveal animation (immediate show) and stops the
+//     always-running pulse, while staying consistent with the [data-reveal]
+//     release logic below.
+//   - Both media queries are followed live (change events) so a 2-in-1 that
+//     swaps between touch and mouse re-wires itself without a reload.
 // ============================================================================
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 
 // --------------------------------------------------------------------------
-// Scroll reveal — works for everyone (reduced-motion gets opacity-only in CSS)
+// Scroll reveal — works for everyone.
+// Normal motion: IntersectionObserver adds .is-revealed and the CSS transition
+// plays. reduced-motion: elements are shown immediately with no transition.
+// Either way the [data-reveal] attribute is released afterwards (see below).
 // --------------------------------------------------------------------------
-function initReveal() {
+function initReveal(reducedMotion) {
   const targets = document.querySelectorAll('[data-reveal]');
   if (!targets.length) return;
 
@@ -28,6 +41,25 @@ function initReveal() {
     el.style.transitionDelay = '';
     el.removeAttribute('data-reveal');
   };
+
+  // reduced-motion: show at once. We still add .is-revealed (end state) and
+  // release the attribute on the next frame so the tilt loop is never trapped
+  // by the [data-reveal] transition — same invariant the QA fix relies on.
+  // The CSS reduced-motion query already strips movement/blur from the
+  // transition, but releasing immediately keeps transform writes free even if
+  // an opacity transition is still nominally attached.
+  if (reducedMotion) {
+    targets.forEach((el) => {
+      el.style.transitionDelay = '';
+      el.classList.add('is-revealed');
+      requestAnimationFrame(() => {
+        el.style.transitionDelay = '';
+        el.removeAttribute('data-reveal');
+      });
+    });
+    return;
+  }
+
   const reveal = (el) => {
     const delay = el.getAttribute('data-reveal-delay');
     if (delay) {
@@ -66,10 +98,17 @@ function initReveal() {
 }
 
 // --------------------------------------------------------------------------
-// Pointer-driven systems (cursor / magnetic / tilt) — fine pointers only
+// Pointer-driven systems (cursor / magnetic / tilt) — fine pointers only.
+// Returns a teardown fn so the entry point can dismantle everything when the
+// active input switches to touch (or reduced-motion turns on).
 // --------------------------------------------------------------------------
 function initPointerSystems() {
   const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, seen: false };
+  const listeners = []; // [target, type, handler] for clean teardown
+  const on = (target, type, handler, opts) => {
+    target.addEventListener(type, handler, opts);
+    listeners.push([target, type, handler]);
+  };
 
   // ---- Custom cursor -------------------------------------------------------
   const dot = document.createElement('div');
@@ -88,13 +127,13 @@ function initPointerSystems() {
 
   const HOVER_SELECTOR = 'a, button, [data-magnetic]';
 
-  document.addEventListener('pointerover', (e) => {
+  on(document, 'pointerover', (e) => {
     if (e.target instanceof Element && e.target.closest(HOVER_SELECTOR)) {
       ring.classList.add('is-hover');
       cursor.ringScaleTarget = 1.8;
     }
   });
-  document.addEventListener('pointerout', (e) => {
+  on(document, 'pointerout', (e) => {
     if (e.target instanceof Element && e.target.closest(HOVER_SELECTOR)) {
       ring.classList.remove('is-hover');
       cursor.ringScaleTarget = 1;
@@ -117,15 +156,21 @@ function initPointerSystems() {
     ring.classList.remove('is-active');
   };
 
-  document.addEventListener('pointermove', (e) => {
+  on(document, 'pointermove', (e) => {
+    // Coarse pointers can still emit pointermove during a tap/drag; ignore them
+    // so a stray touch never resurrects the custom cursor on a touch device.
+    if (e.pointerType === 'touch') return;
     pointer.x = e.clientX;
     pointer.y = e.clientY;
     activateCursor();
   });
   // Hide custom cursor (and restore native) when the pointer leaves the page.
-  document.documentElement.addEventListener('pointerleave', deactivateCursor);
-  document.addEventListener('pointerdown', () => dot.classList.add('is-down'));
-  document.addEventListener('pointerup', () => dot.classList.remove('is-down'));
+  on(document.documentElement, 'pointerleave', deactivateCursor);
+  on(document, 'pointerdown', (e) => {
+    if (e.pointerType === 'touch') return;
+    dot.classList.add('is-down');
+  });
+  on(document, 'pointerup', () => dot.classList.remove('is-down'));
 
   // ---- Magnetic elements ---------------------------------------------------
   const MAGNET_RADIUS = 80;     // attraction range from element edge (px)
@@ -143,8 +188,8 @@ function initPointerSystems() {
       gx: 50, gy: 50, tgx: 50, tgy: 50, // glare position (%)
       hovering: false,
     };
-    el.addEventListener('pointerenter', () => { state.hovering = true; });
-    el.addEventListener('pointermove', (e) => {
+    on(el, 'pointerenter', () => { state.hovering = true; });
+    on(el, 'pointermove', (e) => {
       const rect = el.getBoundingClientRect();
       const px = clamp((e.clientX - rect.left) / rect.width, 0, 1);
       const py = clamp((e.clientY - rect.top) / rect.height, 0, 1);
@@ -153,7 +198,7 @@ function initPointerSystems() {
       state.tgx = px * 100;
       state.tgy = py * 100;
     });
-    el.addEventListener('pointerleave', () => {
+    on(el, 'pointerleave', () => {
       state.hovering = false;
       state.trx = 0;
       state.try_ = 0;
@@ -164,6 +209,7 @@ function initPointerSystems() {
   });
 
   // ---- Shared rAF loop -------------------------------------------------------
+  let rafId = 0;
   const tick = () => {
     // Cursor: dot tracks tightly, ring trails behind.
     cursor.dotX = lerp(cursor.dotX, pointer.x, 0.55);
@@ -220,24 +266,125 @@ function initPointerSystems() {
       t.el.style.setProperty('--my', `${t.gy.toFixed(2)}%`);
     }
 
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
   };
-  requestAnimationFrame(tick);
+  rafId = requestAnimationFrame(tick);
+
+  // ---- Teardown: stop the loop, drop listeners, remove the cursor, and clear
+  // every inline transform/var we wrote so the DOM returns to its CSS baseline.
+  return () => {
+    cancelAnimationFrame(rafId);
+    for (const [target, type, handler] of listeners) {
+      target.removeEventListener(type, handler);
+    }
+    deactivateCursor();
+    dot.remove();
+    ring.remove();
+    for (const m of magnets) m.el.style.transform = '';
+    for (const t of tilts) {
+      t.el.style.transform = '';
+      t.el.style.removeProperty('--mx');
+      t.el.style.removeProperty('--my');
+    }
+  };
+}
+
+// --------------------------------------------------------------------------
+// Touch-tap pulse — the touch-device stand-in for tilt/magnetic hover.
+// A tap on a card or interactive target flashes a short neon glow using the
+// shared token palette, then fades. No persistent motion, so it is also safe
+// under reduced-motion (the .is-tapping class self-removes; the CSS keyframe
+// is disabled under reduced-motion and the class change is a no-op there).
+// Returns a teardown fn.
+// --------------------------------------------------------------------------
+function initTouchPulse() {
+  const PULSE_SELECTOR = '[data-tilt], a, button, [data-magnetic]';
+  const onPointerDown = (e) => {
+    if (e.pointerType === 'mouse') return; // mouse handled by pointer systems
+    if (!(e.target instanceof Element)) return;
+    const el = e.target.closest(PULSE_SELECTOR);
+    if (!el) return;
+    // Restart the animation if the same element is tapped twice in a row.
+    el.classList.remove('is-tapping');
+    // Force reflow so removing + re-adding the class re-triggers the keyframe.
+    void el.offsetWidth;
+    el.classList.add('is-tapping');
+    const clear = () => el.classList.remove('is-tapping');
+    el.addEventListener('animationend', clear, { once: true });
+    // Fallback in case animationend is missed (e.g. reduced-motion: no anim).
+    setTimeout(clear, 700);
+  };
+
+  document.addEventListener('pointerdown', onPointerDown);
+  return () => {
+    document.removeEventListener('pointerdown', onPointerDown);
+    document
+      .querySelectorAll('.is-tapping')
+      .forEach((el) => el.classList.remove('is-tapping'));
+  };
 }
 
 // --------------------------------------------------------------------------
 // Entry point
 // --------------------------------------------------------------------------
 export function initInteractions() {
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  const reducedMotionMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Touch-primary detection: a coarse primary pointer (finger/stylus). This is
+  // the inverse of "fine" but coarse is the positive signal we act on, and it
+  // tracks the active input on hybrid devices.
+  const coarseMq = window.matchMedia('(pointer: coarse)');
 
-  // Reveal always runs; CSS downgrades it to opacity-only under reduced motion.
-  initReveal();
+  let teardownPointer = null; // active cursor/tilt/magnetic teardown
+  let teardownTouch = null;   // active tap-pulse teardown
 
-  // Cursor / magnetic / tilt: desktop pointers only, and never when the user
-  // asked for reduced motion.
-  if (!reducedMotion && finePointer) {
-    initPointerSystems();
-  }
+  // Reveal always runs. Under reduced motion it shows everything immediately;
+  // otherwise the IntersectionObserver entrance plays. Re-evaluated whenever
+  // the reduced-motion preference flips so late toggles still land correctly.
+  let revealReduced = reducedMotionMq.matches;
+  initReveal(revealReduced);
+
+  // Pick the right input model for the current media-query state. Pointer
+  // systems run only for fine pointers with motion allowed; touch-primary
+  // devices (or reduced motion) get the tap pulse instead — never both.
+  const sync = () => {
+    const reducedMotion = reducedMotionMq.matches;
+    const coarse = coarseMq.matches;
+
+    // If reduced motion turned on after we already played the staggered
+    // entrance, leftover [data-reveal] elements that never intersected are
+    // re-released immediately. Already-revealed elements are a no-op.
+    if (reducedMotion && !revealReduced) {
+      revealReduced = true;
+      initReveal(true);
+    }
+
+    const wantPointer = !reducedMotion && !coarse;
+    // Tilt/magnetic hover is motion; suppress under reduced motion. The tap
+    // pulse is a brief, self-clearing flash and the CSS disables its keyframe
+    // under reduced motion, so the touch handler can stay attached either way
+    // (a tap simply toggles an inert class).
+    const wantTouch = coarse;
+
+    if (wantPointer && !teardownPointer) {
+      teardownPointer = initPointerSystems();
+    } else if (!wantPointer && teardownPointer) {
+      teardownPointer();
+      teardownPointer = null;
+    }
+
+    if (wantTouch && !teardownTouch) {
+      teardownTouch = initTouchPulse();
+    } else if (!wantTouch && teardownTouch) {
+      teardownTouch();
+      teardownTouch = null;
+    }
+  };
+
+  sync();
+
+  // Follow live changes so touch<->mouse and motion-preference switches re-wire
+  // without a reload. addEventListener('change') is supported on every browser
+  // that ships matchMedia we target; no legacy addListener fallback needed.
+  reducedMotionMq.addEventListener('change', sync);
+  coarseMq.addEventListener('change', sync);
 }

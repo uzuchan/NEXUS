@@ -89,4 +89,13 @@ export default {
       line3: 'Broadcast live from a laptop, somewhere past the horizon.',
     },
   },
+
+  // Manual mirror of the OGP meta tags in index.html's <head> (Agent 7).
+  // Keep these strings identical to the og:/twitter: tags there. No runtime
+  // reads this; it is the canonical copy deck, edited in lockstep with the HTML.
+  ogp: {
+    title: 'NEXUS — Immersive Sci-Fi Web Experience',
+    description:
+      'An immersive sci-fi web experience: 40,000 GPU particles, cinematic scroll-driven camera, and a website that is completely honest about being one.',
+  },
 };
