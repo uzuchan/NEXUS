@@ -2,6 +2,9 @@
 // Canonical copy deck. No renderer consumes this yet: index.html mirrors it
 // by hand, so when editing language here, update index.html too (and vice
 // versa).
+//
+// Tone: deadpan. Every line opens like a sci-fi epic and quietly admits the
+// truth. The joke is always on the website itself, never on anyone else.
 
 export default {
   brand: {
@@ -13,7 +16,7 @@ export default {
     kicker: 'SIGNAL // 001',
     title: 'BEYOND THE\nEVENT HORIZON',
     subtitle:
-      'NEXUS is a living system at the edge of the renderable — a constructed cosmos where light, data, and intent converge into one continuous signal.',
+      'NEXUS is a living system at the edge of the renderable — a constructed cosmos where light, data, and intent converge into one continuous signal. It is also, technically, a website.',
     cta: {
       primary: 'Initiate Sequence',
       secondary: 'Explore the System',
@@ -24,14 +27,14 @@ export default {
     kicker: 'SUBSYSTEMS // 002',
     title: 'THE ARCHITECTURE OF LIGHT',
     subtitle:
-      'Four core subsystems sustain the NEXUS field. Each runs autonomously. Together they dream in real time.',
+      'Four core subsystems sustain the NEXUS field. Each runs autonomously. None of them are strictly necessary.',
     cards: [
       {
         id: 'particle-engine',
         icon: '◬',
         title: 'Particle Engine',
         body:
-          'Forty thousand points of light, computed every frame on the GPU. They drift like dust through a nebula — until you move, and the field remembers you.',
+          'Forty thousand points of light, computed every frame on the GPU. What do they do? Nothing. But they do it sixty times a second, beautifully.',
         meta: 'SYS.01 // ONLINE',
       },
       {
@@ -39,7 +42,7 @@ export default {
         icon: '◈',
         title: 'Neural Mesh',
         body:
-          'A lattice of signal pathways threading the deep structure. Every interaction propagates outward, rewriting the geometry it touches.',
+          'A lattice of signal pathways threading the deep structure. It is not connected to anything. It has never been connected to anything. It simply loves to glow.',
         meta: 'SYS.02 // SYNCED',
       },
       {
@@ -47,7 +50,7 @@ export default {
         icon: '⬡',
         title: 'Holographic Interface',
         body:
-          'The membrane between you and the machine. Glass panels suspended in depth, refracting data into form you can almost touch.',
+          'The membrane between you and the machine — glass panels suspended in depth. In a meeting, we agreed to call the blur holographic. The blur did not object.',
         meta: 'SYS.03 // ACTIVE',
       },
       {
@@ -55,7 +58,7 @@ export default {
         icon: '✦',
         title: 'Temporal Sync',
         body:
-          'Time inside NEXUS is elastic. The sync core damps every motion into a single cinematic flow — no cuts, no seams, no waiting.',
+          'Time inside NEXUS is elastic. The sync core damps every motion into a single cinematic flow — meaning everything takes slightly longer than necessary, on purpose, for drama.',
         meta: 'SYS.04 // STABLE',
       },
     ],
@@ -65,12 +68,12 @@ export default {
     kicker: 'TELEMETRY // 003',
     title: 'A SYSTEM THAT NEVER SLEEPS',
     subtitle:
-      'Live readings from the NEXUS core. The numbers shift, the field holds.',
+      'Live readings from the NEXUS core. The numbers are not live. They were chosen because they looked confident.',
     stats: [
-      { value: '40K', label: 'Particles in Flight' },
-      { value: '99.99%', label: 'Signal Integrity' },
-      { value: '12.4K', label: 'Nodes in the Mesh' },
-      { value: '0.016s', label: 'Frame Horizon' },
+      { value: '40K', label: 'Particles, Zero Responsibilities' },
+      { value: '99.99%', label: 'Vibe Integrity' },
+      { value: '12.4K', label: 'Nodes, Estimated by Feel' },
+      { value: '0.016s', label: 'Frame Horizon (Just 60fps)' },
     ],
   },
 
@@ -78,11 +81,12 @@ export default {
     kicker: 'UPLINK // 004',
     title: 'OPEN A CHANNEL',
     subtitle:
-      'The system is listening. Transmit your coordinates and step into the field.',
+      'The system is listening. It has no backend, so it cannot reply — but it is listening, decoratively.',
     cta: 'Establish Uplink',
     footer: {
-      line1: 'NEXUS © 2026 — All frequencies reserved.',
-      line2: 'Broadcast from somewhere past the horizon.',
+      line1: 'The Establish Uplink button scrolls you back to the top. That is the uplink.',
+      line2: 'NEXUS © 2026 — All frequencies reserved. None currently in use.',
+      line3: 'Broadcast live from a laptop, somewhere past the horizon.',
     },
   },
 };
