@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 
-// GitHub Pages serves this repo at https://uzuchan.github.io/Karte.github.io/
+// GitHub Pages serves this repo at https://uzuchan.github.io/NEXUS/
 export default defineConfig({
-  base: '/Karte.github.io/',
+  base: '/NEXUS/',
 });
