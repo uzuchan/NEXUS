@@ -129,15 +129,19 @@
   --font-body:    "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* Fluid size scale */
+  /* Fluid size scale — clamp(min, preferred, max).
+     Mins are tuned so the widest display strings (Orbitron 900 + tracking,
+     e.g. "EVENT HORIZON") never force horizontal overflow at 390px.
+     At 390px: 1vw ≈ 3.9px. text-hero min 2.4rem keeps "HORIZON" inside the
+     gutter; text-xl/2xl mins likewise trimmed for the section/stat headings. */
   --text-xs:   clamp(0.66rem, 0.62rem + 0.18vw, 0.75rem);
   --text-sm:   clamp(0.78rem, 0.74rem + 0.22vw, 0.9rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem);
   --text-md:   clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
   --text-lg:   clamp(1.4rem, 1.2rem + 1vw, 2rem);
-  --text-xl:   clamp(2rem, 1.5rem + 2.4vw, 3.4rem);
-  --text-2xl:  clamp(2.6rem, 1.8rem + 4vw, 5rem);
-  --text-hero: clamp(3rem, 2rem + 6.5vw, 7.5rem);
+  --text-xl:   clamp(1.6rem, 1.32rem + 1.45vw, 3.4rem);
+  --text-2xl:  clamp(2rem, 1.55rem + 2.3vw, 5rem);
+  --text-hero: clamp(2.25rem, 1.75rem + 2.6vw, 7.5rem);
 
   --leading-tight:  1.05;
   --leading-snug:   1.25;
@@ -156,8 +160,26 @@
   --space-xl:  3.25rem;   /* 52px */
   --space-2xl: 5.25rem;   /* 84px */
   --space-3xl: 8.5rem;    /* 136px */
-  --space-section: clamp(4rem, 10vh, 9rem);
-  --space-gutter:  clamp(1.25rem, 5vw, 4rem);
+  /* Fluid section rhythm. Mins shrink the generous desktop breathing room
+     on small screens so a panel's content is not pushed past 100svh.
+     Vertical band scales with viewport height; horizontal gutter with width. */
+  --space-section: clamp(3rem, 8vh, 9rem);
+  --space-gutter:  clamp(1.125rem, 5vw, 4rem);
+
+  /* ------------------------------------------------------------------
+     Safe area — notch / home-bar insets (env() with a 0px fallback).
+     Layered surfaces add these to their edge padding so content clears
+     the iOS status bar, the home indicator, and rounded-corner cutouts.
+     ------------------------------------------------------------------ */
+  --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+
+  /* Gutter that already includes the horizontal notch inset, so panel and
+     header padding stay clear of the cutout in landscape on notched phones. */
+  --space-gutter-safe-left:  calc(var(--space-gutter) + var(--safe-left));
+  --space-gutter-safe-right: calc(var(--space-gutter) + var(--safe-right));
 
   /* ------------------------------------------------------------------
      Radius scale

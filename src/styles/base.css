@@ -70,6 +70,11 @@ html {
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
   color-scheme: dark;
+  /* Kill horizontal overflow at the root. `clip` (not `hidden`) is used so we
+     do NOT create a scroll container or a containing block for the fixed
+     canvas/header — the vertical JS-driven (lerp) scroll and position:fixed
+     layers keep working untouched; only sideways bleed is severed. */
+  overflow-x: clip;
 }
 
 ::selection {
@@ -89,7 +94,11 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  /* Belt-and-suspenders: clip sideways bleed at the body too. `hidden` would
+     turn body into a horizontal scroll container; `clip` just trims overflow.
+     Browsers without `overflow-x: clip` ignore this and fall back to the html
+     rule (or simply never produce sideways scroll given the layout). */
+  overflow-x: clip;
 }
 
 /* Headings default to the display face; sections refine from here */
@@ -134,14 +143,30 @@ samp {
 
 /* --------------------------------------------------------------------------
    Section panels — full-viewport cinematic frames
-   -------------------------------------------------------------------------- */
+
+   Height: 100vh is the fallback for browsers without viewport-relative units;
+   100svh (small viewport height) is the effective value. svh is deliberate
+   over dvh here — the page's total scroll height feeds CameraDirector's dolly
+   progress (progress = scrollY / scrollRange), so a STABLE height matters more
+   than edge-to-edge fill. svh stays fixed when the iOS address bar hides,
+   whereas dvh would grow/shrink mid-scroll and make the camera dolly speed
+   lurch. So we keep the panels at the (shortest) svh and let the address bar
+   overlay rather than reflow. Content is centered, so the small unused band at
+   the bottom is never visible as empty space.
+
+   Width: horizontal padding folds in the safe-area inset so content clears the
+   notch when a notched phone is held in landscape. */
 section.panel {
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: var(--space-section) var(--space-gutter);
+  padding:
+    calc(var(--space-section) + var(--safe-top))
+    var(--space-gutter-safe-right)
+    calc(var(--space-section) + var(--safe-bottom))
+    var(--space-gutter-safe-left);
 }
 
 /* --------------------------------------------------------------------------
